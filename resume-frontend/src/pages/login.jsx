@@ -1,11 +1,14 @@
 import { useState } from "react";
 import api from "../api/axios";
+import { Link, useNavigate } from "react-router-dom";
+import AuthLayout from "../components/AuthLayout";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,7 +31,7 @@ export default function Login() {
       localStorage.setItem("refresh", response.data.refresh);
 
       alert("Login successful");
-      window.location.href = "/";
+      navigate("/");
     } catch (error) {
       setError("Invalid email or password");
       console.error(error);
@@ -38,42 +41,40 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px" }}>
-      <h2>Login</h2>
+    <AuthLayout title="Welcome back" subtitle="Sign in to continue scanning and analyzing resumes.">
+      {error && <p className="auth-error">{error}</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: "15px" }}>
+      <form className="auth-form" onSubmit={handleLogin}>
+        <div className="input-group">
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "8px" }}
+            className="auth-input"
             required
           />
         </div>
 
-        <div style={{ marginBottom: "15px" }}>
+        <div className="input-group">
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "8px" }}
+            className="auth-input"
             required
           />
         </div>
 
-        <button type="submit" disabled={loading} style={{ width: "100%", padding: "10px" }}>
+        <button type="submit" disabled={loading} className="auth-button">
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 
-      <p>
-        Don't have an account? <a href="/signup">Sign up here</a>
+      <p className="auth-alt-text">
+        Don't have an account? <Link to="/signup">Sign up here</Link>
       </p>
-    </div>
+    </AuthLayout>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import AuthLayout from "../components/AuthLayout";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const response = await api.post("/users/signup/", {
+      await api.post("/users/signup/", {
         email,
         name,
         password,
@@ -49,53 +50,51 @@ export default function Signup() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px" }}>
-      <h2>Sign Up</h2>
+    <AuthLayout title="Create your account" subtitle="Start your Resume Scanner journey in seconds.">
+      {error && <p className="auth-error">{error}</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <form onSubmit={handleSignup}>
-        <div style={{ marginBottom: "15px" }}>
+      <form className="auth-form" onSubmit={handleSignup}>
+        <div className="input-group">
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "8px" }}
+            className="auth-input"
             required
           />
         </div>
 
-        <div style={{ marginBottom: "15px" }}>
+        <div className="input-group">
           <input
             type="text"
             placeholder="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={{ width: "100%", padding: "8px" }}
+            className="auth-input"
             required
           />
         </div>
 
-        <div style={{ marginBottom: "15px" }}>
+        <div className="input-group">
           <input
             type="password"
             placeholder="Password (min 8 characters)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "8px" }}
+            className="auth-input"
             required
           />
         </div>
 
-        <button type="submit" disabled={loading} style={{ width: "100%", padding: "10px" }}>
+        <button type="submit" disabled={loading} className="auth-button">
           {loading ? "Signing up..." : "Sign Up"}
         </button>
       </form>
 
-      <p>
-        Already have an account? <a href="/login">Log in here</a>
+      <p className="auth-alt-text">
+        Already have an account? <Link to="/login">Log in here</Link>
       </p>
-    </div>
+    </AuthLayout>
   );
 }
