@@ -1,0 +1,77 @@
+extraction.py file completed
+chunknizer.py Done
+detection.pt remaining 
+drf remaining 
+skill_db.py file created as storage 
+created controller.py
+evaluate.py
+
+main for temarory working 
+
+Phase 3A
+
+Install sentence-transformers
+
+Build embedding service module
+
+Implement cosine similarity
+
+Phase 3B
+
+Build semantic scoring function
+
+Test on 5 resumes + 3 JDs
+
+Print similarity matrices
+
+Phase 3C
+
+Integrate into controller with AI flag
+
+
+Ai integration done controller integration left
+working perfectly logic correct backend systems correct 
+
+
+
+testing phase 
+Strong backend-focused resume
+
+Strong ML-focused resume
+
+Strong frontend-focused resume
+
+Full-stack balanced resume
+
+Beginner resume with very few skills
+
+Resume with many repeated keywords
+
+Resume with buzzwords but no real projects
+
+Resume with projects but no dedicated skills section
+
+Resume with only skills section, no projects
+
+Resume with heavy academic content only
+
+Resume with irrelevant domain (e.g., mechanical/civil)
+
+Resume with mixed domains (ML + frontend + cloud)
+
+Resume with very long project descriptions
+
+Resume with very short bullet points
+
+Resume with formatting noise (extra spaces, symbols)
+
+Resume with only experience section populated
+
+Resume with many certifications listed
+
+Resume with outdated technologies only
+
+Resume with high ORG mentions (company-heavy)
+
+Resume with zero recognizable skills
+backend complete front end started 
