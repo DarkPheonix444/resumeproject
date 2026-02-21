@@ -254,7 +254,7 @@ export default function ResumeUpload() {
         )}
       </main>
 
-      <footer className="upload-footer">All rightts reserved by darkpheonix 444</footer>
+      <footer className="upload-footer">All rights reserved by darkpheonix 444</footer>
     </div>
   );
 }

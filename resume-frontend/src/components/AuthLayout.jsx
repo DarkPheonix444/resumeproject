@@ -29,7 +29,7 @@ export default function AuthLayout({ title, subtitle, children }) {
         </section>
       </main>
 
-      <footer className="auth-footer">All rightts reserved by darkpheonix 444</footer>
+      <footer className="auth-footer">All rights reserved by darkpheonix 444</footer>
     </div>
   );
 }

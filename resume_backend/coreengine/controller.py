@@ -58,8 +58,8 @@ def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:list| Non
         else:
             final_score = (
                 0.4 * rule_score +
-                0.3 * semanetic_score +
-                0.5 * experience_score
+                0.2 * semanetic_score +
+                0.4 * experience_score
             )
     else:
         if experience.get("years_experience", 0) <= 0:
