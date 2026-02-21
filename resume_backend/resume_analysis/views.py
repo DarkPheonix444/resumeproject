@@ -1,10 +1,15 @@
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
+from .models import Resume,resume_analysis
+from .serializer import ResumeSerializer,ResumeAnalysisSerializer
+from .services import create_analysis
 from django.utils import timezone
-
+from django.db import transaction
+from rest_framework.decorators import action
 import os
 import tempfile
 import logging
@@ -135,6 +140,25 @@ class ResumeAnalysisView(APIView):
             evaluation = result.get("evaluation", {})
             experience_score = float(result.get("experience_score") or 0)
 
+            if hasattr(file, "seek"):
+                file.seek(0)
+
+            with transaction.atomic():
+                resume = Resume.objects.create(user=request.user, file=file)
+                create_analysis(
+                    resume=resume,
+                    result_dict={
+                        "hard_score": float(evaluation.get("rule_score") or 0),
+                        "soft_score": float(result.get("semantic_score") or 0),
+                        "total_score": float(result.get("final_score") or 0),
+                        "skills": skills,
+                        "sections": result.get("sections", {}),
+                        "experience": evaluation,
+                    },
+                    ai_enabled=ai_enabled,
+                    jd_text=jd_requirement.strip() if jd_requirement else None,
+                )
+
             # Strongest domains
             strong_domains = sorted(
                 skills.keys(),
@@ -200,3 +224,28 @@ class ResumeAnalysisView(APIView):
         finally:
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
+class ResumeViewset(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ResumeSerializer
+
+    def get_queryset(self):
+        return (
+            Resume.objects.filter(user=self.request.user)
+            .prefetch_related("analyses")
+            .order_by("-uploaded_at")
+        )
+    @action(detail=True, methods=["get"])
+    def analyses(self, request, pk=None):
+        resume = self.get_object()
+        analyses = resume.analyses.all()
+        serializer = ResumeAnalysisSerializer(analyses, many=True)
+        return Response(serializer.data)
+    
+class ResumeAnalysisViewset(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ResumeAnalysisSerializer
+
+    def get_queryset(self):
+        return resume_analysis.objects.filter(
+            resume__user=self.request.user
+        ).select_related("resume")
