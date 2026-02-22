@@ -94,6 +94,8 @@ export default function ResumeUpload() {
     return dateValue.toLocaleString();
   };
 
+  const normalizedScore = Math.min(100, Math.max(0, Number(scores?.final || 0)));
+
   const breakdownChartData = [
     { name: "Rule-based", value: Number(breakdown?.rule || 0) },
     { name: "AI Visualized", value: Number(breakdown?.semantic || 0) },
@@ -163,11 +165,29 @@ export default function ResumeUpload() {
         {resultData && (
           <section className="results-layout">
             <div className="metrics-column">
-              <article className="result-card">
-                <h3>Final Score</h3>
-                <p className="result-big">{formatScore(scores?.final)}%</p>
-                <p className="result-muted">Confidence: {formatScore(scores?.confidence)}%</p>
-                <p className="result-muted">Analyzed at: {formatDateTime(resultData?.analyzed_at)}</p>
+              <article className="result-card score-card">
+                <div className="score-card-header">
+                  <div>
+                    <p className="score-title">Final Score</p>
+                    <p className="score-subtitle">Overall resume match</p>
+                  </div>
+                </div>
+                <div className="score-ring" style={{ "--score": normalizedScore }}>
+                  <div className="score-ring-inner">
+                    <span className="score-ring-value">{formatScore(scores?.final)}%</span>
+                    <span className="score-ring-label">Score</span>
+                  </div>
+                </div>
+                <div className="score-card-meta">
+                  <div className="score-meta">
+                    <span className="score-meta-label">Confidence</span>
+                    <span className="score-meta-value">{formatScore(scores?.confidence)}%</span>
+                  </div>
+                  <div className="score-meta">
+                    <span className="score-meta-label">Analyzed</span>
+                    <span className="score-meta-value">{formatDateTime(resultData?.analyzed_at)}</span>
+                  </div>
+                </div>
               </article>
 
               <article className="result-card">
