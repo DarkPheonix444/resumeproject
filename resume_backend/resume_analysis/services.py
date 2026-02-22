@@ -1,12 +1,12 @@
 from django.db.models import Max
-from .models import resume_analysis
+from .models import ResumeAnalysis
 
 def create_analysis(resume, result_dict, ai_enabled=False, jd_text=None):
-    latest_version=(resume_analysis.objects.filter(resume=resume).aggregate(Max('version'))['version__max'] )
+    latest_version = ResumeAnalysis.objects.filter(resume=resume).aggregate(Max('version'))['version__max']
 
-    new_version=1 if latest_version is None else latest_version + 1
+    new_version = 1 if latest_version is None else latest_version + 1
 
-    return resume_analysis.objects.create(
+    return ResumeAnalysis.objects.create(
         resume=resume,
         version=new_version,
         hard_score=result_dict["hard_score"],

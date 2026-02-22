@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await api.post("/api/token/", {
+      const response = await api.post("/token/", {
         email,
         password,
       });

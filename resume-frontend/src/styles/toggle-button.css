@@ -1,0 +1,40 @@
+/* Toggle Sidebar Button Styles */
+.toggle-sidebar-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-right: 8px;
+  color: #f9fafb;
+  position: relative;
+  z-index: 1001;
+}
+
+.hamburger-line {
+  width: 24px;
+  height: 3px;
+  background-color: #f9fafb;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.toggle-sidebar-btn:hover .hamburger-line {
+  background-color: #60a5fa;
+}
+
+/* Hamburger animation when sidebar is open */
+.toggle-sidebar-btn.open .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(10px, 10px);
+}
+
+.toggle-sidebar-btn.open .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.toggle-sidebar-btn.open .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}

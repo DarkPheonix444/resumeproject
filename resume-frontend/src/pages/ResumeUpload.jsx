@@ -13,6 +13,9 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import Sidebar from "../components/Sidebar";
+import ToggleSidebarButton from "../components/ToggleSidebarButton";
+import HistoryComparison from "../components/HistoryComparison";
 import api from "../api/axios";
 
 export default function ResumeUpload() {
@@ -106,9 +109,12 @@ export default function ResumeUpload() {
   const pieColors = ["#60a5fa", "#34d399", "#f59e0b"];
 
   return (
-    <div className="upload-page">
+    <div className="page-with-sidebar">
+      <Sidebar />
+      <div className="upload-page">
       <header className="upload-navbar">
         <div className="upload-navbar-inner">
+          <ToggleSidebarButton />
           <span className="upload-brand">Resume Scanner</span>
         </div>
       </header>
@@ -252,9 +258,22 @@ export default function ResumeUpload() {
             </div>
           </section>
         )}
+
+        {resultData && (
+          <section className="comparison-section">
+            <HistoryComparison 
+              currentScore={{
+                total: scores?.final,
+                rule: breakdown?.rule,
+                semantic: breakdown?.semantic,
+              }}
+            />
+          </section>
+        )}
       </main>
 
       <footer className="upload-footer">All rights reserved by darkpheonix 444</footer>
+    </div>
     </div>
   );
 }

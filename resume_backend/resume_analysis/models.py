@@ -15,7 +15,7 @@ class Resume(models.Model):
     
 
 
-class  resume_analysis(models.Model):
+class ResumeAnalysis(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE, related_name='analyses')
     version = models.IntegerField()

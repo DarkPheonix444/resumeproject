@@ -24,6 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(serializer_class=CustomTokenObtainPairSerializer), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('users/',include('users.urls')),
-    path('resume-analysis/',include('resume_analysis.urls')),
+    path('api/users/', include('users.urls')),
+    path('api/resume-analysis/', include('resume_analysis.urls')),
 ]

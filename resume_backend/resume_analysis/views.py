@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .models import Resume,resume_analysis
-from .serializer import ResumeSerializer,ResumeAnalysisSerializer
+from .models import Resume, ResumeAnalysis
+from .serializer import ResumeSerializer, ResumeAnalysisSerializer
 from .services import create_analysis
 from django.utils import timezone
 from django.db import transaction
@@ -224,7 +224,7 @@ class ResumeAnalysisView(APIView):
         finally:
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
-class ResumeViewset(viewsets.ReadOnlyModelViewSet):
+class ResumeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ResumeSerializer
 
@@ -241,11 +241,11 @@ class ResumeViewset(viewsets.ReadOnlyModelViewSet):
         serializer = ResumeAnalysisSerializer(analyses, many=True)
         return Response(serializer.data)
     
-class ResumeAnalysisViewset(viewsets.ReadOnlyModelViewSet):
+class ResumeAnalysisViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ResumeAnalysisSerializer
 
     def get_queryset(self):
-        return resume_analysis.objects.filter(
+        return ResumeAnalysis.objects.filter(
             resume__user=self.request.user
         ).select_related("resume")
