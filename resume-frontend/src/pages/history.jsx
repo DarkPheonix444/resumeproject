@@ -10,6 +10,7 @@ export default function History() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [nextPage, setNextPage] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
     const navigate = useNavigate();
 
@@ -33,6 +34,22 @@ export default function History() {
     useEffect(() => {
         fetchResumes();
     }, []);
+
+    const handleDeleteResume = async (resumeId) => {
+      const confirmed = window.confirm("Delete this resume and its analysis history?");
+      if (!confirmed) return;
+
+      try {
+        setDeletingId(resumeId);
+        await api.delete(`/resume-analysis/resumes/${resumeId}/`);
+        setHistory((prev) => prev.filter((item) => item.id !== resumeId));
+      } catch (err) {
+        console.error("Failed to delete resume:", err);
+        setError("Failed to delete resume. Please try again.");
+      } finally {
+        setDeletingId(null);
+      }
+    };
 
   return (
     <div className="page-with-sidebar">
@@ -68,6 +85,16 @@ export default function History() {
                 <div className="history-grid">
                   {history.map((resume, index) => (
                     <div key={resume.id} className="history-card">
+                      <button
+                        className="card-delete-btn"
+                        onClick={() => handleDeleteResume(resume.id)}
+                        disabled={deletingId === resume.id}
+                        title="Delete resume"
+                        aria-label="Delete resume"
+                      >
+                        {deletingId === resume.id ? "..." : "🗑"}
+                      </button>
+
                       <div className="card-header">
                         <div className="card-number">#{index + 1}</div>
                         <div className="card-date">

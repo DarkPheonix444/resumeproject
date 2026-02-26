@@ -224,10 +224,10 @@ class ResumeAnalysisView(APIView):
         finally:
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
-class ResumeViewSet(viewsets.ReadOnlyModelViewSet):
+class ResumeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ResumeSerializer
-
+    http_method_names = ['get','delete']
     def get_queryset(self):
         return (
             Resume.objects.filter(user=self.request.user)
@@ -244,7 +244,7 @@ class ResumeViewSet(viewsets.ReadOnlyModelViewSet):
 class ResumeAnalysisViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ResumeAnalysisSerializer
-
+    
     def get_queryset(self):
         return ResumeAnalysis.objects.filter(
             resume__user=self.request.user

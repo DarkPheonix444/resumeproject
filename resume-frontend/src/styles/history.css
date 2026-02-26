@@ -149,6 +149,37 @@
   opacity: 1;
 }
 
+.card-delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.16);
+  color: #fecaca;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.card-delete-btn:hover:not(:disabled) {
+  background: #ef4444;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 14px rgba(239, 68, 68, 0.3);
+}
+
+.card-delete-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -156,6 +187,7 @@
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid #374151;
+  padding-right: 40px;
 }
 
 .card-number {
