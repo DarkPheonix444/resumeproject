@@ -1,3 +1,5 @@
+from detection import skill_detection
+
 def get_default_jd() -> list[str]:
     return [
         "Strong software engineering fundamentals and problem-solving ability",
@@ -10,19 +12,20 @@ def get_default_jd() -> list[str]:
         "Understanding of system architecture, performance optimization, and security best practices"
     ]
 def get_jd_text(jd_requirement: str | None) -> str:
-    if jd_requirement:
-            jd_requirement = jd_requirement.strip()
+    if not jd_requirement or not jd_requirement.strip():
+        return False
+    
+    jd_text=jd_requirement.strip()
 
-    jd_skills={
-        'skills': [],
-        'experience': [],
-        'domains': [],
+    jd_sections={
+        'skills':jd_text,
+        'experience':jd_text,
+        'projects':''
     }
 
-    for jd in jd_requirement.split('\n'):
-        if "experience" in jd.lower():
-            jd_skills['experience'].append(jd)
-        elif any(keyword in jd.lower() for keyword in ["skill", "technology", "tool"]):
-            jd_skills['skills'].append(jd)
-        else:
-            jd_skills['domains'].append(jd)
+    extracted_skills=skill_detection(jd_sections)
+
+    return {
+        'raw_text':jd_text,
+        'extracted_skills':extracted_skills
+    }
