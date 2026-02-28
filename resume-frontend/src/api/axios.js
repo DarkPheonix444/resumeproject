@@ -28,6 +28,16 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    const requestUrl = originalRequest.url || "";
+
+    if (requestUrl.includes("/token/") || requestUrl.includes("/token/refresh/")) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -45,9 +55,16 @@ api.interceptors.response.use(
 
       const refreshToken = localStorage.getItem("refresh");
 
+      if (!refreshToken) {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
+
       try {
-        const res = await api.post(
-          "/token/refresh/",
+        const res = await axios.post(
+          `${api.defaults.baseURL}/token/refresh/`,
           { refresh: refreshToken }
         );
 

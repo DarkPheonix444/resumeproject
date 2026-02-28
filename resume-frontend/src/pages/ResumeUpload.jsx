@@ -50,10 +50,15 @@ export default function ResumeUpload() {
       return;
     }
 
+    if (aiEnabled && !jobDescription.trim()) {
+      setErrorMessage("Job description is required when AI is enabled.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("ai_enabled", aiEnabled ? "true" : "false");
-    if (aiEnabled && jobDescription.trim()) {
+    if (jobDescription.trim()) {
       formData.append("job_description", jobDescription.trim());
     }
     setIsSubmitting(true);
@@ -83,6 +88,11 @@ export default function ResumeUpload() {
   const scores = resultData?.scores;
   const profile = resultData?.profile;
   const summary = resultData?.skills_summary;
+  const jdMatching = resultData?.jd_matching;
+  const hasValidJdMatching =
+    jdMatching &&
+    Number.isFinite(Number(jdMatching?.jd_score)) &&
+    Number(jdMatching?.total_required_skills || 0) > 0;
   const breakdown = scores?.breakdown;
   const chartTextColor = "#e5e7eb";
 
@@ -106,6 +116,18 @@ export default function ResumeUpload() {
     { name: "Unique", value: Number(summary?.total_unique ?? 0) },
     { name: "Mentions", value: Number(summary?.total_mentions ?? 0) },
     { name: "Diversity", value: Number(summary?.domain_diversity ?? 0) },
+  ];
+
+  const jdComparisonData = [
+    { name: "Matched", value: Number(jdMatching?.total_matched_skills || 0) },
+    {
+      name: "Missing",
+      value: Math.max(
+        0,
+        Number(jdMatching?.total_required_skills || 0) - Number(jdMatching?.total_matched_skills || 0)
+      ),
+    },
+    { name: "Extra", value: Number((jdMatching?.extra_skills || []).length || 0) },
   ];
 
   const pieColors = ["#60a5fa", "#34d399", "#f59e0b"];
@@ -144,15 +166,13 @@ export default function ResumeUpload() {
               <span>AI Enabled</span>
             </label>
 
-            {aiEnabled && (
-              <textarea
-                className="upload-textarea"
-                placeholder="Add job description (optional)"
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                rows={4}
-              />
-            )}
+            <textarea
+              className="upload-textarea"
+              placeholder="Add job description (required when AI enabled)"
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              rows={4}
+            />
 
             <button className="upload-button" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Analyzing..." : "Analyze Resume"}
@@ -276,6 +296,102 @@ export default function ResumeUpload() {
                 </div>
               </article>
             </div>
+          </section>
+        )}
+
+        {resultData && (
+          <section className="jd-match-section">
+            {hasValidJdMatching ? (
+              <article className="result-card jd-match-card">
+                <div className="jd-match-header">
+                  <h3>JD Match Analysis</h3>
+                  <span className="jd-score-badge">{formatScore(jdMatching?.jd_score)}%</span>
+                </div>
+                <div className="jd-progress-track">
+                  <div
+                    className="jd-progress-fill"
+                    style={{ width: `${Math.min(100, Math.max(0, Number(jdMatching?.jd_score || 0)))}%` }}
+                  />
+                </div>
+                <div className="jd-stats-row">
+                  <div className="jd-stat-box">
+                    <span className="jd-stat-label">Required Skills</span>
+                    <span className="jd-stat-value">{jdMatching?.total_required_skills ?? 0}</span>
+                  </div>
+                  <div className="jd-stat-box">
+                    <span className="jd-stat-label">Matched Skills</span>
+                    <span className="jd-stat-value">{jdMatching?.total_matched_skills ?? 0}</span>
+                  </div>
+                </div>
+
+                <div className="jd-graph-wrap">
+                  <ResponsiveContainer width="100%" height={190}>
+                    <BarChart data={jdComparisonData} margin={{ top: 8, right: 12, left: -8, bottom: 8 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="name" stroke={chartTextColor} tick={{ fill: chartTextColor }} />
+                      <YAxis stroke={chartTextColor} tick={{ fill: chartTextColor }} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", color: "#f9fafb" }}
+                      />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                        {jdComparisonData.map((entry) => (
+                          <Cell
+                            key={entry.name}
+                            fill={entry.name === "Matched" ? "#34d399" : entry.name === "Missing" ? "#f59e0b" : "#60a5fa"}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="jd-skill-lists">
+                  <div className="jd-skill-block">
+                    <p className="jd-skill-title">Matched Skills</p>
+                    <div className="jd-chip-wrap">
+                      {(jdMatching?.matched_skills || []).length > 0 ? (
+                        jdMatching.matched_skills.map((skill) => (
+                          <span key={`m-${skill}`} className="jd-chip jd-chip-green">{skill}</span>
+                        ))
+                      ) : (
+                        <span className="jd-chip jd-chip-empty">None</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="jd-skill-block">
+                    <p className="jd-skill-title">Missing Skills</p>
+                    <div className="jd-chip-wrap">
+                      {(jdMatching?.missing_skills || []).length > 0 ? (
+                        jdMatching.missing_skills.map((skill) => (
+                          <span key={`x-${skill}`} className="jd-chip jd-chip-amber">{skill}</span>
+                        ))
+                      ) : (
+                        <span className="jd-chip jd-chip-empty">None</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="jd-skill-block">
+                    <p className="jd-skill-title">Extra Skills</p>
+                    <div className="jd-chip-wrap">
+                      {(jdMatching?.extra_skills || []).length > 0 ? (
+                        jdMatching.extra_skills.map((skill) => (
+                          <span key={`e-${skill}`} className="jd-chip jd-chip-blue">{skill}</span>
+                        ))
+                      ) : (
+                        <span className="jd-chip jd-chip-empty">None</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ) : (
+              <article className="result-card jd-match-card jd-match-empty">
+                <h3>JD Match Analysis</h3>
+                <p className="result-muted">JD comparison is shown only when a valid job description is provided.</p>
+              </article>
+            )}
           </section>
         )}
 

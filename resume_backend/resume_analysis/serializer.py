@@ -63,11 +63,21 @@ class ResumeAnalysisSerializer(serializers.ModelSerializer):
             "total_mentions": total_mentions,
             "domain_diversity": domain_diversity,
         }
+
+        jd_matching = {
+            "matched_skills": obj.matched_skill or [],
+            "missing_skills": obj.missing_skill or [],
+            "extra_skills": obj.extra_skill or [],
+            "jd_score": obj.jd_score,
+            "total_required_skills": obj.total_required_skill,
+            "total_matched_skills": obj.total_matched_skill,
+        }
         
         return {
             "scores": scores,
             "profile": profile,
             "skills_summary": skills_summary,
+            "jd_matching": jd_matching,
             "analyzed_at": obj.created_at.isoformat() if obj.created_at else None,
         }
 

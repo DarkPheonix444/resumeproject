@@ -83,7 +83,14 @@ export default function History() {
                 </div>
 
                 <div className="history-grid">
-                  {history.map((resume, index) => (
+                  {history.map((resume, index) => {
+                    const jdMatching = resume.latest_analysis?.data?.jd_matching;
+                    const hasValidJdMatching =
+                      jdMatching &&
+                      Number.isFinite(Number(jdMatching?.jd_score)) &&
+                      Number(jdMatching?.total_required_skills || 0) > 0;
+
+                    return (
                     <div key={resume.id} className="history-card">
                       <button
                         className="card-delete-btn"
@@ -114,6 +121,28 @@ export default function History() {
                               {resume.latest_analysis.total_score.toFixed(1)}%
                             </div>
                           </div>
+
+                          {hasValidJdMatching && (
+                            <div className="jd-history-box">
+                              <div className="jd-history-top">
+                                <span className="jd-history-title">JD Match</span>
+                                <span className="jd-history-score">{Number(jdMatching?.jd_score || 0).toFixed(1)}%</span>
+                              </div>
+                              <div className="jd-history-track">
+                                <div
+                                  className="jd-history-fill"
+                                  style={{ width: `${Math.min(100, Math.max(0, Number(jdMatching?.jd_score || 0)))}%` }}
+                                />
+                              </div>
+                              <div className="jd-history-meta">
+                                {jdMatching?.total_matched_skills ?? 0} / {jdMatching?.total_required_skills ?? 0} matched
+                              </div>
+                              <div className="jd-history-details">
+                                <span>Missing: {(jdMatching?.missing_skills || []).length}</span>
+                                <span>Extra: {(jdMatching?.extra_skills || []).length}</span>
+                              </div>
+                            </div>
+                          )}
 
                           <div className="analysis-details">
                             <div className="detail-item">
@@ -146,7 +175,7 @@ export default function History() {
                         View Details →
                       </button>
                     </div>
-                  ))}
+                  )})}
                 </div>
 
                 {nextPage && (
