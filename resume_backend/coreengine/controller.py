@@ -4,10 +4,10 @@ from coreengine.nlp import analyze_spacy,fallback_skill_detection
 from coreengine.evaluator import evaluate_resume
 from coreengine.chunknizer import chunk_text
 from coreengine.engine import semantic_engine
-
+from coreengine.matcher import compute_jd_match
+from coreengine.jobdescription import get_jd_text
 
 FALLBACK_THRESHOLD=4
-
 def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:list| None = None)->dict:
 
     text=extract(file_path)
@@ -18,7 +18,6 @@ def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:list| Non
     section=detection(text)
 
     rule_skills=skill_detection(section)
-
     spacy_metrics=analyze_spacy(text)
     experience=experience_signal_detection(text)
 
@@ -80,3 +79,18 @@ def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:list| Non
         "final_score": round(final_score, 2),
         "confidence": confidence
     }
+
+
+def jd_matching(resume_result:dict,text:str)->dict:
+    if not  text or not text.strip():
+         return{}
+    if not resume_result or "skills" not in resume_result:
+        return {}
+    jd_text=get_jd_text(text)
+    jd_skills=jd_text.get("extracted_skills",{}) 
+    resume_skill=resume_result.get("skills",{})    
+
+    computed_score=compute_jd_match(resume_skill,jd_skills)
+
+    return computed_score
+
