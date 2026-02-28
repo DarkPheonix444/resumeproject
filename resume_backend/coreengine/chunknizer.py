@@ -5,7 +5,7 @@ class chunkingerror(Exception):
     pass
 
 
-def chunk_text(text:str,max_chars:int=1200)->List[str]:
+def chunk_text(text:str,max_chars:int=300)->List[str]:
     if not isinstance(text,str):
         raise chunkingerror("Input must be a string.")
     

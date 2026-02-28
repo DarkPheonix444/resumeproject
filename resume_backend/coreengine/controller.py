@@ -5,10 +5,9 @@ from coreengine.evaluator import evaluate_resume
 from coreengine.chunknizer import chunk_text
 from coreengine.engine import semantic_engine
 from coreengine.matcher import compute_jd_match
-from coreengine.jobdescription import get_jd_text
-
+from coreengine.jobdescription import get_jd_text,get_default_jd
 FALLBACK_THRESHOLD=4
-def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:list| None = None)->dict:
+def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:str | None = None)->dict:
 
     text=extract(file_path)
 
@@ -44,7 +43,11 @@ def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:list| Non
     semanetic_score=None
     final_score=rule_score
 
-    if ai_enabled and jd_requirements:
+    if ai_enabled:
+        if  jd_requirements:
+            jd_requirements=chunk_text(jd_requirements)
+        else:
+            jd_requirements=get_default_jd()
         resume_chunk=chunk_text(text)
 
         semanetic_score=semantic_engine.compute_semantic_score(resume_chunk,jd_requirements)
@@ -84,7 +87,7 @@ def process_resume(file_path:str,ai_enabled:bool=False,jd_requirements:list| Non
 def jd_matching(resume_result:dict,text:str)->dict:
     if not  text or not text.strip():
          return{}
-    if not resume_result or "skills" not in resume_result:
+    if not resume_result :
         return {}
     jd_text=get_jd_text(text)
     jd_skills=jd_text.get("extracted_skills",{}) 

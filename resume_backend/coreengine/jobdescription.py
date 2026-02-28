@@ -1,4 +1,4 @@
-from detection import skill_detection
+from coreengine.detection import skill_detection
 
 def get_default_jd() -> list[str]:
     return [
@@ -11,10 +11,9 @@ def get_default_jd() -> list[str]:
         "Ability to write clean, efficient, and production-ready code",
         "Understanding of system architecture, performance optimization, and security best practices"
     ]
-def get_jd_text(jd_requirement: str | None) -> str:
+def get_jd_text(jd_requirement: str | None) -> dict:
     if not jd_requirement or not jd_requirement.strip():
-        return False
-    
+        return {}
     jd_text=jd_requirement.strip()
 
     jd_sections={

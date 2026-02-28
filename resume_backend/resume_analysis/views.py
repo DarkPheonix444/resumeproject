@@ -14,8 +14,7 @@ import os
 import tempfile
 import logging
 
-from coreengine.controller import process_resume
-from coreengine.jobdescription import get_default_jd
+from coreengine.controller import process_resume,jd_matching
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +34,10 @@ class ResumeAnalysisView(APIView):
         file = request.FILES.get("file")
         jd_requirement = request.data.get("job_description")
         ai_enabled = request.data.get("ai_enabled", "false").lower() == "true"
-
+        if jd_requirement:
+            jd_requirement = jd_requirement.replace("\n", " ").strip()
+        else:
+            jd_requirement=None
         # ---------------------------
         # FILE VALIDATION
         # ---------------------------
@@ -104,11 +106,10 @@ class ResumeAnalysisView(APIView):
             # JD NORMALIZATION (Policy Layer)
             # ---------------------------
 
-            if jd_requirement:
-                jd_line = jd_requirement.replace("\n", " ").strip()
-                jd_requirements = [jd_line] if jd_line else get_default_jd()
-            else:
-                jd_requirements = get_default_jd()
+            # if jd_requirement:
+            #     jd_line = jd_requirement.replace("\n", " ").strip()
+            #     jd_requirements = [jd_line] if jd_line else get_default_jd()
+            
 
             # ---------------------------
             # PROCESS ENGINE
@@ -117,8 +118,12 @@ class ResumeAnalysisView(APIView):
             result = process_resume(
                 temp_file_path,
                 ai_enabled=ai_enabled,
-                jd_requirements=jd_requirements
+                jd_requirements=jd_requirement
             )
+            if jd_requirement:
+                job_det=jd_matching(result, jd_requirement)
+            else:
+                job_det=None
 
             if result.get("error"):
                 return Response(
@@ -154,6 +159,14 @@ class ResumeAnalysisView(APIView):
                         "skills": skills,
                         "sections": result.get("sections", {}),
                         "experience": evaluation,
+                    },
+                    jd_dict={
+                        "matched_skills": job_det.get("matched_skills") if job_det else None,
+                        "missing_skills": job_det.get("missing_skills") if job_det else None,
+                        "extra_skills": job_det.get("extra_skills") if job_det else None,
+                        "jd_score": job_det.get("match_percentage") if job_det else None,
+                        "total_required_skills": job_det.get("total_required") if job_det else None,
+                        "total_matched_skills": job_det.get("total_matched") if job_det else None
                     },
                     ai_enabled=ai_enabled,
                     jd_text=jd_requirement.strip() if jd_requirement else None,
@@ -203,6 +216,14 @@ class ResumeAnalysisView(APIView):
                         "total_mentions": 0,
                         "domain_diversity": 0,
                     },
+                    "jd_matching":{
+                        "matched_skills": job_det.get("matched_skills") if job_det else None,
+                        "missing_skills": job_det.get("missing_skills") if job_det else None,
+                        "extra_skills": job_det.get("extra_skills") if job_det else None,
+                        "jd_score": job_det.get("match_percentage") if job_det else None,
+                        "total_required_skills": job_det.get("total_required") if job_det else None,
+                        "total_matched_skills": job_det.get("total_matched") if job_det else None
+                    }
                 }
             }
 

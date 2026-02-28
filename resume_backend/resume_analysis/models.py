@@ -28,7 +28,12 @@ class ResumeAnalysis(models.Model):
     sections_json=models.JSONField()
     experience_json=models.JSONField()
     jd_text = models.TextField(null=True, blank=True)
-
+    matched_skill=models.JSONField(null=True, blank=True)
+    missing_skill=models.JSONField(null=True, blank=True)
+    extra_skill=models.JSONField(null=True, blank=True)
+    jd_score=models.FloatField(null=True, blank=True)
+    total_required_skill=models.IntegerField(null=True, blank=True)
+    total_matched_skill=models.IntegerField(null=True, blank=True)
     ai_enabled=models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
