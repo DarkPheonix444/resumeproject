@@ -1,7 +1,11 @@
 import spacy
 import re
 from coreengine.skill_db import SKILL_MAP
-nlp=spacy.load("en_core_web_sm")
+
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    nlp = spacy.blank("en")
 
 def analyze_spacy(text:str)->dict:
 
@@ -54,10 +58,22 @@ def fallback_skill_detection(sections:dict)->dict:
 
     extracted_phrases=set()
 
-    for chunks in doc.noun_chunks:
-        lemma_phrase=" ".join([token.lemma_ for token in chunks]).strip()
-        lemma_phrase = re.sub(r"\s+", " ", lemma_phrase)
-        extracted_phrases.add(lemma_phrase)
+    noun_chunks = list(doc.noun_chunks) if doc.has_annotation("DEP") else []
+    if noun_chunks:
+        for chunks in noun_chunks:
+            lemma_phrase=" ".join([token.lemma_ for token in chunks]).strip()
+            lemma_phrase = re.sub(r"\s+", " ", lemma_phrase)
+            extracted_phrases.add(lemma_phrase)
+    else:
+        token_list = []
+        for token in doc:
+            token_text = token.text.lower().strip()
+            if token_text:
+                extracted_phrases.add(token_text)
+                token_list.append(token_text)
+
+        for index in range(len(token_list) - 1):
+            extracted_phrases.add(f"{token_list[index]} {token_list[index + 1]}")
 
     detected_skill={}
     for category, skills in SKILL_MAP.items():
