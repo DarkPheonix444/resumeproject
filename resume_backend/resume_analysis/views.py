@@ -33,7 +33,7 @@ class ResumeAnalysisView(APIView):
     def post(self, request):
         file = request.FILES.get("file")
         jd_requirement = request.data.get("job_description")
-        ai_enabled = request.data.get("ai_enabled", "false").lower() == "true"
+        ai_enabled = request.data.get("ai_enabled", "false").lower() == ""
         if jd_requirement:
             jd_requirement = jd_requirement.replace("\n", " ").strip()
         else:
