@@ -1,4 +1,4 @@
-import { useSidebar } from "../context/SidebarContext";
+import { useSidebar } from "../context/useSidebar";
 import "../styles/toggle-button.css";
 
 export default function ToggleSidebarButton() {
@@ -9,6 +9,7 @@ export default function ToggleSidebarButton() {
       className={`toggle-sidebar-btn ${isOpen ? 'open' : ''}`}
       onClick={toggleSidebar}
       aria-label="Toggle sidebar"
+      aria-expanded={isOpen}
       title="Toggle sidebar"
     >
       <span className="hamburger-line"></span>

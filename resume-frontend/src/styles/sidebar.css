@@ -3,8 +3,8 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.7);
-  opacity: 0;
-  pointer-events: none;
+  opacity: 1;
+  pointer-events: auto;
   z-index: 999;
   transition: opacity 0.3s ease;
   display: none;
@@ -14,17 +14,6 @@
   .sidebar-overlay {
     display: block;
   }
-
-  .sidebar-overlay.show,
-  .sidebar.sidebar-open ~ .sidebar-overlay {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-.sidebar-overlay.show {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .sidebar {
@@ -208,19 +197,13 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .sidebar {
-    width: 220px;
+    width: min(280px, calc(100vw - 56px));
     transform: translateX(-100%);
   }
 
   .sidebar.sidebar-open {
     transform: translateX(0);
   }
-
-  .sidebar-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
   .page-with-sidebar .upload-page {
     margin-left: 0;
   }
@@ -240,49 +223,25 @@
 
 @media (max-width: 640px) {
   .sidebar {
-    width: 70px;
-    align-items: center;
+    width: min(280px, calc(100vw - 56px));
     transform: translateX(-100%);
   }
 
   .sidebar.sidebar-open {
-    width: 220px;
-    align-items: stretch;
     transform: translateX(0);
   }
 
   .sidebar-header {
-    padding: 16px 8px;
+    padding: 18px 20px;
   }
 
   .sidebar-title {
-    font-size: 12px;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-  }
-
-  .sidebar.sidebar-open .sidebar-title {
-    writing-mode: initial;
-    transform: none;
     font-size: 16px;
   }
 
   .sidebar-user {
-    flex-direction: column;
-    padding: 12px 8px;
-  }
-
-  .sidebar.sidebar-open .sidebar-user {
     flex-direction: row;
-    padding: 20px 24px;
-  }
-
-  .user-info {
-    display: none;
-  }
-
-  .sidebar.sidebar-open .user-info {
-    display: block;
+    padding: 16px 20px;
   }
 
   .user-avatar {
@@ -291,35 +250,16 @@
     font-size: 16px;
   }
 
-  .sidebar.sidebar-open .user-avatar {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
-  }
-
   .nav-item {
-    padding: 10px;
-    justify-content: center;
-  }
-
-  .sidebar.sidebar-open .nav-item {
     padding: 12px 16px;
     justify-content: flex-start;
   }
 
-  .nav-label {
-    display: none;
-  }
-
-  .sidebar.sidebar-open .nav-label {
-    display: inline;
-  }
-
   .page-with-sidebar .upload-page {
-    margin-left: 70px;
+    margin-left: 0;
   }
 
   .page-with-sidebar .history-page {
-    margin-left: 70px;
+    margin-left: 0;
   }
 }

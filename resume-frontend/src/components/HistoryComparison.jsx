@@ -58,7 +58,7 @@ export default function HistoryComparison({ currentScore }) {
   }
 
   // Prepare comparison data
-  const comparisonData = historyData.map((item, index) => ({
+  const comparisonData = historyData.map((item) => ({
     name: `v${item.version}`,
     score: item.total_score,
     hardScore: item.hard_score,

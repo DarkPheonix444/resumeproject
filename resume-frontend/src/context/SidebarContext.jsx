@@ -1,9 +1,20 @@
-import { createContext, useContext, useState } from 'react';
-
-const SidebarContext = createContext();
+import { useEffect, useState } from 'react';
+import { SidebarContext } from './useSidebar';
 
 export function SidebarProvider({ children }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.innerWidth > 768;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsOpen(window.innerWidth > 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => setIsOpen(false);
@@ -14,12 +25,4 @@ export function SidebarProvider({ children }) {
       {children}
     </SidebarContext.Provider>
   );
-}
-
-export function useSidebar() {
-  const context = useContext(SidebarContext);
-  if (!context) {
-    throw new Error('useSidebar must be used within SidebarProvider');
-  }
-  return context;
 }

@@ -2,15 +2,22 @@
 .toggle-sidebar-btn {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 5px;
-  background: none;
-  border: none;
+  width: 42px;
+  height: 42px;
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid #374151;
+  border-radius: 10px;
   cursor: pointer;
-  padding: 8px;
-  margin-right: 8px;
+  padding: 0;
+  margin-right: 0;
   color: #f9fafb;
   position: relative;
   z-index: 1001;
+  flex: 0 0 auto;
+  touch-action: manipulation;
 }
 
 .hamburger-line {
@@ -28,7 +35,7 @@
 
 /* Hamburger animation when sidebar is open */
 .toggle-sidebar-btn.open .hamburger-line:nth-child(1) {
-  transform: rotate(45deg) translate(10px, 10px);
+  transform: rotate(45deg) translate(6px, 6px);
 }
 
 .toggle-sidebar-btn.open .hamburger-line:nth-child(2) {
@@ -36,5 +43,23 @@
 }
 
 .toggle-sidebar-btn.open .hamburger-line:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -7px);
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+@media (max-width: 768px) {
+  .toggle-sidebar-btn {
+    position: sticky;
+    left: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toggle-sidebar-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .hamburger-line {
+    width: 22px;
+  }
 }
