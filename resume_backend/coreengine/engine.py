@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer
+
 import numpy as np
 
 class semantic_engine:
@@ -7,6 +7,7 @@ class semantic_engine:
 
     @classmethod
     def _load_model(cls):
+        from sentence_transformers import SentenceTransformer
         if cls._model is None:
             cls._model = SentenceTransformer(cls.MODEL_NAME)
 
