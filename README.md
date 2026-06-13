@@ -329,13 +329,5 @@ resumeproject/
 
 ---
 
-## Evaluation
-
-The system was evaluated on a dataset of **30 resumes** with annotated ground-truth labels. Evaluation focused on four engineering dimensions:
-
-- **Skill extraction correctness:** Verification that detected skills align with annotated ground-truth skill mentions.
-- **Scoring consistency:** Validation that semantically similar resumes produce stable and proportionate score behavior under the weighted normalization model.
-- **JD alignment validation:** Confirmation that matched and missing JD skills are correctly reflected in alignment outputs and downstream scoring components.
-- **Format stability:** Consistency checks across different resume input structures and formats (including PDF and DOCX parsing paths) to ensure robust pipeline behavior.
 
 
